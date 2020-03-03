@@ -1,24 +1,30 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
 import io from "socket.io-client";
 
-export default class Home extends Component {
-  state = {
-    response: "",
-    endpoint: "http://localhost:3005/api"
+const Home = () => {
+  const endpoint = "http://localhost:3005/";
+  const [text, setText] = useState("");
+
+  const handleChange = event => {
+    setText(event.target.value);
   };
 
-  componentDidMount() {
-    const { endpoint } = this.state;
+  const sendData = () => {
     const socket = io(endpoint);
-    const { response } = this.state;
-    socket.on(
-      "connectionAPI",
-      res => this.setState({ response: res }),
-      console.log(response)
-    );
-  }
-  render() {
-    const { response } = this.state;
-    return <div> {response} </div>;
-  }
-}
+    socket.emit("outgoing", { data: text });
+  };
+
+  return (
+    <div>
+      <form onSubmit={sendData}>
+        <label>
+          Testing:
+          <input type="text" value={text} onChange={handleChange} />
+        </label>
+        <input type="submit" value="Submit" />
+      </form>
+    </div>
+  );
+};
+
+export default Home;

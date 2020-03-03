@@ -8,14 +8,16 @@ const port = 3005;
 app.use(cors());
 
 app.get("/", (req, res) => {
-  res.send({ response: "I am alive" }).status(200);
+  res.send("I am alive").status(200);
 });
 
 io.on("connection", socket => {
-  const res = "hello mate";
   console.log("connected");
+  socket.on("outgoing", data => {
+    console.log(data);
+  });
+
   socket.on("disconnect", () => console.log("disconnected"));
-  socket.emit("connectionAPI", res);
 });
 
 server.listen(port, () => console.log(`listening on port ${port}!`));
