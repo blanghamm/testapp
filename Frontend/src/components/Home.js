@@ -1,17 +1,20 @@
 import React, { useState } from "react";
 import io from "socket.io-client";
 
+const endpoint = "http://localhost:3005/";
+const socket = io(endpoint);
+
 const Home = () => {
-  const endpoint = "http://localhost:3005/";
-  const [text, setText] = useState("");
+  const [text, setText] = useState(0);
 
   const handleChange = event => {
     setText(event.target.value);
   };
 
-  const sendData = () => {
-    const socket = io(endpoint);
-    socket.emit("outgoing", { data: text });
+  const sendData = e => {
+    e.preventDefault();
+    socket.emit("outgoing", text);
+    setText(0);
   };
 
   return (
