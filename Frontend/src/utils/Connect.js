@@ -35,38 +35,57 @@ const data = new Array(number).fill().map(() => {
 });
 
 function Content() {
-  const [thing, setThing] = useState(10);
+  const [thing, setThing] = useState(0.2);
+  console.log("turd " + thing);
+
   const [springs, set] = useSprings(number, i => ({
     from: random(i),
     ...random(i),
-    config: { mass: thing, tension: 150, friction: 50 }
+    config: { mass: 10, tension: 150, friction: 20 }
   }));
   useEffect(
     () =>
       void setInterval(() => set(i => ({ ...random(i), delay: i * 40 })), 3000),
     [set]
   );
-  //   useEffect(() => {
-  //     socket.on("three", data => {
-  //       console.log(data);
-  //       setThing(data);
-  //     });
-  //   });
+  useEffect(() => {
+    socket.on("three", data => {
+      setThing(data);
+    });
+  });
   return data.map((d, index) => (
     <a.mesh key={index} {...springs[index]} castShadow receiveShadow>
       <boxBufferGeometry attach="geometry" args={d.args} />
       <a.meshStandardMaterial
         attach="material"
         color={springs[index].color}
-        roughness={0.75}
-        metalness={0.5}
+        roughness={thing}
+        metalness={thing}
       />
     </a.mesh>
   ));
 }
 
+function Lights() {
+  return (
+    <group>
+      <pointLight intensity={0.3} />
+      <ambientLight intensity={2} />
+      <spotLight
+        castShadow
+        intensity={0.2}
+        angle={Math.PI / 7}
+        position={[150, 150, 250]}
+        penumbra={1}
+        shadow-mapSize-width={2048}
+        shadow-mapSize-height={2048}
+      />
+    </group>
+  );
+}
+
 const Canvas = styled(c)`
-  background-color: #cdcd;
+  /* background-color: #cdcd; */
   position: absolute !important;
   margin: 0;
   padding: 0;
@@ -82,6 +101,7 @@ export default function Box() {
         gl.outputEncoding = THREE.sRGBEncoding;
       }}
     >
+      <Lights />
       <Content />
     </Canvas>
   );
