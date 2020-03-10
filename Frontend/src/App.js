@@ -12,14 +12,23 @@ const BigBox = styled(Box)`
   width: 100vh;
 `;
 
+const Main = styled.div`
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ecede7;
+`;
+
 function App() {
   return (
-    <div className="App">
+    <Main>
       <Switch>
         <Route exact path="/" component={Home}></Route>
         <Route exact path="/three" component={BigBox}></Route>
       </Switch>
-    </div>
+    </Main>
   );
 }
 

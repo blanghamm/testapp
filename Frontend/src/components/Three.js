@@ -9,6 +9,12 @@ import { useSpring, a } from "react-spring/three";
 const endpoint = "http://localhost:3005/";
 const socket = io(endpoint);
 
+const Canvas = styled(c)`
+  position: absolute !important;
+  margin: 0;
+  padding: 0;
+`;
+
 function Content({ props, thing }) {
   const mesh = useRef();
   const [hovered, setHover] = useState(false);
@@ -60,12 +66,6 @@ function Lights() {
   );
 }
 
-const Canvas = styled(c)`
-  position: absolute !important;
-  margin: 0;
-  padding: 0;
-`;
-
 export default function Box() {
   const [thing, setThing] = useState(0);
   useEffect(() => {
@@ -78,7 +78,7 @@ export default function Box() {
   return (
     <Canvas
       shadowMap
-      camera={{ position: [0, 0, 100], fov: 100 }}
+      camera={{ position: [0, 0, 100], fov: 400 }}
       gl={({ gl }) => {
         gl.toneMapping = THREE.ACESFilmicToneMapping;
         gl.outputEncoding = THREE.sRGBEncoding;
