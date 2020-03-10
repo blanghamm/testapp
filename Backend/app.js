@@ -15,7 +15,6 @@ io.on("connection", socket => {
   console.log("connected");
   socket.on("outgoing", data => {
     io.emit("three", data);
-    // console.log(data);
   });
 
   socket.on("disconnect", () => console.log("disconnected"));

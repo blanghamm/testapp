@@ -1,31 +1,33 @@
 import React, { useState } from "react";
 import io from "socket.io-client";
+import Slider from "@material-ui/core/Slider";
 
 const endpoint = "http://localhost:3005/";
 const socket = io(endpoint);
 
 const Home = () => {
-  const [text, setText] = useState(0);
+  const [number, setNumber] = useState(0);
 
-  const handleChange = event => {
-    setText(event.target.value);
-  };
-
-  const sendData = e => {
-    e.preventDefault();
-    socket.emit("outgoing", text);
-    setText(0);
+  const handleSliderChange = (event, newNumber) => {
+    setNumber(newNumber);
+    event.preventDefault();
+    socket.emit("outgoing", number);
   };
 
   return (
     <div>
-      <form onSubmit={sendData}>
-        <label>
-          Testing:
-          <input type="text" value={text} onChange={handleChange} />
-        </label>
-        <input type="submit" value="Submit" />
-      </form>
+      <label>
+        Testing:
+        <Slider
+          defaultValue={0}
+          valueLabelDisplay="auto"
+          step={0.1}
+          marks
+          min={0}
+          max={1}
+          onChange={handleSliderChange}
+        />
+      </label>
     </div>
   );
 };

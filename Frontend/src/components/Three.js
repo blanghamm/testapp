@@ -1,47 +1,44 @@
 import React, { useRef, useState, useEffect } from "react";
 import * as THREE from "three";
-import { useFrame, useThree } from "react-three-fiber";
+import { useFrame } from "react-three-fiber";
 import io from "socket.io-client";
 import { Canvas as c } from "react-three-fiber";
 import styled from "styled-components";
+import { useSpring, a } from "react-spring/three";
 
 const endpoint = "http://localhost:3005/";
 const socket = io(endpoint);
 
-function Content(props) {
-  // This reference will give us direct access to the mesh
+function Content({ props, thing }) {
   const mesh = useRef();
-  const { camera } = useThree();
-
-  // Set up state for the hovered and active state
   const [hovered, setHover] = useState(false);
   const [active, setActive] = useState(false);
-  const [thing, setThing] = useState(200);
-  console.log("turd " + thing);
+  const funky = useSpring({
+    scale: active ? [10, 10, 10] : [20, 20, 20],
+    color: hovered ? "hotpink" : "orange"
+  });
 
-  useEffect(() => {
-    socket.on("three", data => {
-      setThing(data);
-    });
-  }, []);
+  useFrame(() => {
+    mesh.current.rotation.y = mesh.current.rotation.x += thing;
+  });
 
   return (
-    <mesh
+    <a.mesh
       {...props}
       ref={mesh}
-      scale={active ? [50, 50, 50] : [100, 100, 100]}
+      scale={funky.scale}
       onClick={e => setActive(!active)}
       onPointerOver={e => setHover(true)}
       onPointerOut={e => setHover(false)}
     >
       <boxBufferGeometry attach="geometry" args={[1, 1, 1]} />
-      <meshStandardMaterial
+      <a.meshStandardMaterial
         attach="material"
-        color={hovered ? "hotpink" : "orange"}
+        color={funky.color}
         roughness={0.75}
         metalness={0.6}
       />
-    </mesh>
+    </a.mesh>
   );
 }
 
@@ -70,6 +67,14 @@ const Canvas = styled(c)`
 `;
 
 export default function Box() {
+  const [thing, setThing] = useState(0);
+  useEffect(() => {
+    socket.on("three", data => {
+      setThing(data);
+    });
+    console.log("state number " + thing);
+  }, [thing]);
+
   return (
     <Canvas
       shadowMap
@@ -80,7 +85,7 @@ export default function Box() {
       }}
     >
       <Lights />
-      <Content />
+      <Content thing={thing} />
     </Canvas>
   );
 }
